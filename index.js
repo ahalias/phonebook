@@ -57,8 +57,10 @@ app.get('/api/persons', (request, response) => {
     .catch((error) => next(error))
   });
 
-  app.post('/api/persons', (request, response) => {
-    const { name, number } = request.body;
+  app.post('/api/persons', (request, response, next) => {
+    let { name, number } = request.body;
+    name = name.trim()
+    number = number.trim()
     
     if (!name) {
       return response.status(400).json({ error: 'name is missing' });
@@ -70,7 +72,9 @@ app.get('/api/persons', (request, response) => {
       }
   
       const person = new Person({ name, number });
-      person.save().then((result) => response.json(result));
+      person.save()
+      .then((result) => response.json(result))
+      .catch(error => next(error));
     });
   });
 
@@ -79,7 +83,7 @@ app.get('/api/persons', (request, response) => {
       name: request.body.name, 
       number: request.body.number,
     }
-    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
     .then((updatedPerson) => {
       response.json(updatedPerson)
     })
@@ -99,7 +103,9 @@ app.get('/api/persons', (request, response) => {
   
     if (error.name === 'CastError') {
       return response.status(400).send({ error: 'malformatted id' })
-    } 
+    } else if (error.name === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
+    }
   
     next(error)
   }
