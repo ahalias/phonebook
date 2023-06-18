@@ -22,7 +22,7 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length] :b
 
 
 app.get('/health', (request, response, next) => {
-    response.status(201).send(ok)
+    response.status(201).send("OK")
 })
 
 app.get('/api/persons', (request, response) => {
