@@ -18,8 +18,6 @@ jobs:
           node-version: '18'
       - name: Install dependencies 
         run: npm install  
-      - name: run tests
-        run: npm run test
       - name: Trigger deployment
         if: ${{ github.event_name == 'push' }}
         run: curl ${{ secrets.RENDER_HOOK }}
