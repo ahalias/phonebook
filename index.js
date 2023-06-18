@@ -21,7 +21,9 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length] :b
 
 
 
-
+app.get('/health', (request, response, next) => {
+    response.status(201).send(ok)
+})
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then((result) => response.json(result))
